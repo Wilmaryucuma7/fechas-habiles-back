@@ -48,7 +48,7 @@ PORT=3000
 
 ```bash
 # Clonar el repositorio
-git clone <repository-url>
+git clone https://github.com/Wilmaryucuma7/fechas-habiles-back.git
 cd fechas-habiles
 
 # Instalar dependencias
