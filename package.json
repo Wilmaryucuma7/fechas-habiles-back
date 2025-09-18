@@ -1,0 +1,47 @@
+{
+	"name": "fechas-habiles-api",
+	"version": "1.0.0",
+	"description": "API REST para calcular fechas hábiles en Colombia con arquitectura hexagonal",
+	"main": "dist/main.js",
+	"scripts": {
+		"dev": "ts-node -r tsconfig-paths/register src/main.ts",
+		"build": "tsc -p tsconfig.build.json && tsc-alias",
+		"start": "node dist/main.js",
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"test:coverage": "jest --coverage",
+		"lint": "tsc --noEmit -p tsconfig.build.json",
+		"clean": "rm -rf dist"
+	},
+	"keywords": [
+		"api",
+		"fechas-habiles",
+		"colombia",
+		"typescript",
+		"hexagonal-architecture"
+	],
+	"author": "Technical Test",
+	"license": "MIT",
+	"dependencies": {
+		"date-fns": "^4.1.0",
+		"date-fns-tz": "^3.2.0",
+		"express": "^5.1.0",
+		"zod": "^4.1.9"
+	},
+	"devDependencies": {
+		"@types/express": "^5.0.3",
+		"@types/jest": "^30.0.0",
+		"@types/node": "^24.5.1",
+		"@types/supertest": "^6.0.3",
+		"jest": "^30.1.3",
+		"supertest": "^7.1.4",
+		"ts-jest": "^29.4.2",
+		"ts-node": "^10.9.2",
+		"tsc-alias": "^1.8.16",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.9.2"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	}
+}
