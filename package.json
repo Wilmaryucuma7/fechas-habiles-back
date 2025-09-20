@@ -11,7 +11,10 @@
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage",
 		"lint": "tsc --noEmit -p tsconfig.build.json",
-		"clean": "rm -rf dist"
+		"build:lambda": "node build-lambda.js",
+		"cdk:bootstrap": "cd infrastructure && npm run bootstrap",
+		"cdk:deploy": "cd infrastructure && npm run deploy",
+		"cdk:destroy": "cd infrastructure && npm run destroy"
 	},
 	"keywords": [
 		"api",
@@ -20,7 +23,7 @@
 		"typescript",
 		"hexagonal-architecture"
 	],
-	"author": "Technical Test",
+	"author": "Wilmar Yucuma",
 	"license": "MIT",
 	"dependencies": {
 		"cors": "2.8.5",
@@ -35,6 +38,8 @@
 		"@types/jest": "^30.0.0",
 		"@types/node": "^24.5.1",
 		"@types/supertest": "^6.0.3",
+		"esbuild": "^0.23.0",
+		"esbuild-node-externals": "^1.14.0",
 		"jest": "^30.1.3",
 		"supertest": "^7.1.4",
 		"ts-jest": "^29.4.2",

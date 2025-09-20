@@ -12,11 +12,6 @@ import { WorkingDayCalculator } from '@/domain/services/WorkingDayCalculator';
 import { WorkingHourCalculator } from '@/domain/services/WorkingHourCalculator';
 import { IDependencyContainer } from '@/application/ports/IDependencyContainer';
 
-/**
- * Composition Root - Centralizes dependency injection and wiring
- * Following hexagonal architecture principles
- * Implements the dependency container port
- */
 export class CompositionRoot implements IDependencyContainer {
   private static instance: CompositionRoot;
 
@@ -28,10 +23,8 @@ export class CompositionRoot implements IDependencyContainer {
   }
 
   public createWorkingDateController(): WorkingDateController {
-    // Infrastructure layer - configuration adapter
     const configurationPort: IConfigurationPort = new ConfigurationAdapter();
     
-    // Infrastructure layer - external adapters
     const httpClient = new FetchHttpClient();
     const holidayRepo = new CaptaHolidayRepository(
       configurationPort.getHolidayConfig().apiUrl,
@@ -40,7 +33,6 @@ export class CompositionRoot implements IDependencyContainer {
     );
     const timeProvider = new DateFnsTzTimeProvider();
 
-    // Domain layer - business logic
     const workingHoursConfig = configurationPort.getWorkingHoursConfig();
     const workingHoursService = new WorkingHoursService(workingHoursConfig);
     const dayCalculator = new WorkingDayCalculator(workingHoursService, timeProvider);
@@ -53,10 +45,34 @@ export class CompositionRoot implements IDependencyContainer {
       hourCalculator
     );
 
-    // Application layer - use cases
     const calculateWorkingDateUseCase = new CalculateWorkingDateUseCase(workingDateService);
 
-    // Infrastructure layer - controllers
     return new WorkingDateController(calculateWorkingDateUseCase);
+  }
+
+  public createCalculateWorkingDateUseCase(): CalculateWorkingDateUseCase {
+    const configurationPort: IConfigurationPort = new ConfigurationAdapter();
+    
+    const httpClient = new FetchHttpClient();
+    const holidayRepo = new CaptaHolidayRepository(
+      configurationPort.getHolidayConfig().apiUrl,
+      holidayCache,
+      httpClient
+    );
+    const timeProvider = new DateFnsTzTimeProvider();
+
+    const workingHoursConfig = configurationPort.getWorkingHoursConfig();
+    const workingHoursService = new WorkingHoursService(workingHoursConfig);
+    const dayCalculator = new WorkingDayCalculator(workingHoursService, timeProvider);
+    const hourCalculator = new WorkingHourCalculator(workingHoursService, timeProvider);
+    const workingDateService = new WorkingDateService(
+      holidayRepo,
+      workingHoursService,
+      timeProvider,
+      dayCalculator,
+      hourCalculator
+    );
+
+    return new CalculateWorkingDateUseCase(workingDateService);
   }
 }

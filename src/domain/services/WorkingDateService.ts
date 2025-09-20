@@ -7,10 +7,6 @@ import { TimeProvider } from '@/domain/ports/ITimeProvider';
 import { WorkingDayCalculator } from '@/domain/services/WorkingDayCalculator';
 import { WorkingHourCalculator } from '@/domain/services/WorkingHourCalculator';
 
-/**
- * Domain service that orchestrates working date calculations
- * Core business logic for calculating working dates with days and hours
- */
 export class WorkingDateService {
   constructor(
     private readonly holidayRepository: HolidayRepository,
@@ -31,7 +27,7 @@ export class WorkingDateService {
       const holidays = await this.holidayRepository.getHolidays();
       const startDateLocal = this.timeProvider.toZonedTime(startDate, this.workingHoursService.timezone);
 
-      let workingDate = this.dayCalculator.moveToPreviousWorkingDay(startDateLocal);
+      let workingDate = this.dayCalculator.moveToPreviousWorkingDay(startDateLocal, holidays);
 
       if (queryOrDays > 0) {
         workingDate = this.dayCalculator.addWorkingDays(workingDate, queryOrDays, holidays);
@@ -49,7 +45,7 @@ export class WorkingDateService {
     
     const startDateLocal = this.timeProvider.toZonedTime(query.startDate, this.workingHoursService.timezone);
 
-    let workingDate = this.dayCalculator.moveToPreviousWorkingDay(startDateLocal);
+    let workingDate = this.dayCalculator.moveToPreviousWorkingDay(startDateLocal, holidays);
 
     if (query.days > 0) {
       workingDate = this.dayCalculator.addWorkingDays(workingDate, query.days, holidays);
