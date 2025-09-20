@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { CalculateWorkingDateUseCase } from '@/application/use-cases/CalculateWorkingDateUseCase';
+import { ICalculateWorkingDateUseCase } from '@/application/ports/ICalculateWorkingDateUseCase';
 import { WorkingDateQuerySchema } from '@/shared/schemas';
 
 export class WorkingDateController {
-  constructor(private readonly calculateWorkingDateUseCase: CalculateWorkingDateUseCase) {}
+  constructor(private readonly calculateWorkingDateUseCase: ICalculateWorkingDateUseCase) {}
 
   async calculate(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {

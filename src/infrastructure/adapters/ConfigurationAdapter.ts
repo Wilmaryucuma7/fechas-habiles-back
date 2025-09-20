@@ -1,8 +1,14 @@
-import { config } from '@/config';
 import { WorkingHoursConfig } from '@/domain/services/WorkingHoursService';
+import { IConfigurationPort } from '@/domain/ports/IConfigurationPort';
+import { config } from '@/infrastructure/config/ConfigurationManager';
 
-export class ConfigurationAdapter {
-  static createWorkingHoursConfig(): WorkingHoursConfig {
+/**
+ * Configuration Adapter - Infrastructure layer
+ * Adapts external configuration to domain needs.
+ * Implements the IConfigurationPort to provide configuration data to domain services.
+ */
+export class ConfigurationAdapter implements IConfigurationPort {
+  getWorkingHoursConfig(): WorkingHoursConfig {
     return {
       timezone: config.workingHours.TIMEZONE,
       startHour: config.workingHours.START_HOUR,
@@ -12,7 +18,7 @@ export class ConfigurationAdapter {
     };
   }
 
-  static getHolidayConfig() {
+  getHolidayConfig() {
     return {
       apiUrl: config.holidays.apiUrl,
       cacheTimeout: config.holidays.cacheTimeout,

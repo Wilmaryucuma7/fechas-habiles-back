@@ -1,7 +1,12 @@
 import { Holiday } from '@/domain/entities/Holiday';
-import { config } from '@/config';
+import { config } from '@/infrastructure/config/ConfigurationManager';
+import { ICacheService } from '@/shared/ports/ICacheService';
 
-export class HolidayCacheService {
+/**
+ * Cache service for holidays - Shared layer
+ * Implements caching with configurable timeout
+ */
+export class HolidayCacheService implements ICacheService {
   private holidaysCache: Holiday[] | null = null;
   private cacheTimestamp: number | null = null;
   private readonly cacheTimeout = config.holidays.cacheTimeout;

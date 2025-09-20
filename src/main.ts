@@ -1,16 +1,19 @@
 import { ExpressApp } from '@/infrastructure/adapters/ExpressApp';
+import { CompositionRoot } from '@/infrastructure/composition/CompositionRoot';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-const app = new ExpressApp();
+// Composition root - single responsibility
+const compositionRoot = new CompositionRoot();
+const workingDateController = compositionRoot.createWorkingDateController();
+
+const app = new ExpressApp(workingDateController);
 app.start(PORT);
 
 process.on('SIGINT', () => {
-  console.log('👋 Shutting down gracefully...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('👋 Shutting down gracefully...');
   process.exit(0);
 });

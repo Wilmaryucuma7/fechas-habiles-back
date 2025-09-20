@@ -41,8 +41,7 @@ describe('Working Date API - Basic Functionality Test', () => {
       expect(resultDate).toBeInstanceOf(Date);
       expect(resultDate.getUTCDay()).toBe(1); // Monday
       
-      console.log(`Input: ${mondayDate}`);
-      console.log(`Output: ${response.body.date}`);
+  // Debug logs removed for test cleanliness
     });
 
     it('should add working days excluding holidays', async () => {
@@ -59,8 +58,7 @@ describe('Working Date API - Basic Functionality Test', () => {
       const resultDate = new Date(response.body.date);
       expect(resultDate).toBeInstanceOf(Date);
       
-      console.log(`Days test - Input: ${testDate}`);
-      console.log(`Days test - Output: ${response.body.date}`);
+  // Debug logs removed for test cleanliness
       
       // Should skip January 1st (holiday) and possibly weekends
     });

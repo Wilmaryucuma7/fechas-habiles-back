@@ -1,32 +1,40 @@
 import { HolidayRepository } from '@/domain/repositories/HolidayRepository';
 import { Holiday, HolidayEntity } from '@/domain/entities/Holiday';
 import { HolidayFetchError } from '@/domain/entities/DomainError';
-import { config } from '@/config';
-import { holidayCache } from '@/shared/services/CacheService';
+import { ICacheService } from '@/shared/ports/ICacheService';
+import { IHttpClient } from '@/shared/ports/IHttpClient';
 
 type HolidayApiResponse = string[];
 
 export class CaptaHolidayRepository implements HolidayRepository {
-  private readonly apiUrl = config.holidays.apiUrl;
-
+  constructor(
+    private readonly apiUrl: string,
+    private readonly cacheService: ICacheService,
+    private readonly httpClient?: IHttpClient
+  ) {}
+ 
   async getHolidays(): Promise<Holiday[]> {
-    return holidayCache.getHolidays(async () => {
+    return this.cacheService.getHolidays(async () => {
       return this.fetchHolidaysFromAPI();
     });
   }
 
   private async fetchHolidaysFromAPI(): Promise<Holiday[]> {
     try {
-      const response = await fetch(this.apiUrl);
-      
-      if (!response.ok) {
+      const rawResponse = this.httpClient ? await this.httpClient.get<HolidayApiResponse>(this.apiUrl) : await fetch(this.apiUrl);
+
+      const ok = 'ok' in (rawResponse as any) ? (rawResponse as any).ok : false;
+      const status = 'status' in (rawResponse as any) ? (rawResponse as any).status : 0;
+      const statusText = ok ? '' : `HTTP ${status}`;
+
+      if (!ok) {
         throw new HolidayFetchError(
-          `Failed to fetch holidays: HTTP ${response.status} ${response.statusText}`
+          `Failed to fetch holidays: ${statusText}`
         );
       }
 
-      const data = await response.json() as HolidayApiResponse;
-      
+      const data = ('json' in (rawResponse as any) ? await (rawResponse as any).json() : []) as HolidayApiResponse;
+
       if (!Array.isArray(data)) {
         throw new HolidayFetchError('Invalid response format: expected array');
       }
@@ -35,7 +43,7 @@ export class CaptaHolidayRepository implements HolidayRepository {
         if (typeof dateString !== 'string') {
           throw new HolidayFetchError('Invalid holiday data: expected date string');
         }
-        
+
         return new HolidayEntity(dateString);
       });
 
@@ -43,16 +51,15 @@ export class CaptaHolidayRepository implements HolidayRepository {
       if (error instanceof HolidayFetchError) {
         throw error;
       }
-      
+
       if (error instanceof Error) {
         throw new HolidayFetchError(`Network error: ${error.message}`);
       }
-      
+
       throw new HolidayFetchError('Unknown error occurred while fetching holidays');
     }
   }
-
   clearCache(): void {
-    holidayCache.invalidateHolidays();
+    this.cacheService.invalidateHolidays();
   }
 }

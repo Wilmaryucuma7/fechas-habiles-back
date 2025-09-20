@@ -34,7 +34,16 @@ describe('WorkingDateService - Business Logic Tests', () => {
       lunchEndHour: 13,
     });
 
-    workingDateService = new WorkingDateService(mockHolidayRepository, workingHoursService);
+  // Provide required dependencies explicitly
+  const { DateFnsTzTimeProvider } = require('@/infrastructure/adapters/DateFnsTzTimeProvider');
+  const { WorkingDayCalculator } = require('@/domain/services/WorkingDayCalculator');
+  const { WorkingHourCalculator } = require('@/domain/services/WorkingHourCalculator');
+
+  const timeProvider = new DateFnsTzTimeProvider();
+  const dayCalculator = new WorkingDayCalculator(workingHoursService, timeProvider);
+  const hourCalculator = new WorkingHourCalculator(workingHoursService, timeProvider);
+
+  workingDateService = new WorkingDateService(mockHolidayRepository, workingHoursService, timeProvider, dayCalculator, hourCalculator);
   });
 
   // Helper function to create dates in Colombia timezone

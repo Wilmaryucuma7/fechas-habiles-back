@@ -82,7 +82,11 @@ describe('ExpressApp Integration Tests', () => {
 
   describe('CORS headers', () => {
     it('should include CORS headers', async () => {
-      const response = await request(server).get('/health');
+      const response = await request(server)
+        .options('/working-date')
+        .set('Origin', 'http://localhost:3000')
+        .set('Access-Control-Request-Method', 'GET')
+        .set('Access-Control-Request-Headers', 'content-type');
       
       expect(response.headers['access-control-allow-origin']).toBe('*');
       expect(response.headers['access-control-allow-methods']).toBeDefined();
